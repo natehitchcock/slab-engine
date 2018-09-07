@@ -2,6 +2,7 @@
 #include "ISystem.h"
 #include "VDeleter.h"
 #include "SDL.h"
+#include "SDL_Vulkan.h"
 
 class VulkanRenderer: public ISystem
 {
@@ -57,7 +58,7 @@ public:
 
 private:
 	void initWindow();
-	static void onWindowResized(GLFWwindow* window, int width, int height);
+	static void onWindowResized(SDL_Window* window, int width, int height);
 	void initVulkan();
 
 	void recreateSwapChain();

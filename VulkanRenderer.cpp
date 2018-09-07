@@ -7,10 +7,8 @@
 #include <vector>
 #include <cstring>
 #include <array>
-#include "SDL_vulkan.h"
 
 #include "VulkanRenderer.h"
-
 
 VulkanRenderer::VulkanRenderer()
 {
@@ -24,11 +22,11 @@ void VulkanRenderer::Initialize()
 
 bool VulkanRenderer::Update()
 {
-	if (glfwWindowShouldClose(window))
-		return false;
+	//if (glfwWindowShouldClose(window))
+	//	return false;
 	
-	
-	glfwPollEvents();
+	// TODO: SDL even pump
+	//glfwPollEvents();
 	drawFrame();
 	
 	return true;
@@ -151,17 +149,17 @@ const std::vector<Vertex> vertices = {
 			return;
 		}
 
-		window = SDL_CreateWindow("Slab Engine", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, 0);
+		window = SDL_CreateWindow("Slab Engine", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_VULKAN);
 	}
 
-	void VulkanRenderer::onWindowResized(GLFWwindow* window, int width, int height)
+	void VulkanRenderer::onWindowResized(SDL_Window* window, int width, int height)
 	{
-		if (width <= 0 || height <= 0) return;
+		/*if (width <= 0 || height <= 0) return;
 
 		VulkanRenderer* app = reinterpret_cast<VulkanRenderer*>(
 			glfwGetWindowUserPointer(window));
 
-		app->recreateSwapChain();
+		app->recreateSwapChain();*/
 
 	}
 
@@ -283,16 +281,26 @@ const std::vector<Vertex> vertices = {
 	{
 		std::vector<const char*> extensions;
 
-		unsigned int glfwExtensionCount = 0;
-		const char** glfwExtensions;
-		glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+		unsigned int extensionCount = 0;
+		if (SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, nullptr) < 0)
+		{
+			throw std::runtime_error("failed to retrieve vulkan instance extension count!");
+		}
 
-		for (unsigned int i = 0; i < glfwExtensionCount; i++)
-			extensions.push_back(glfwExtensions[i]);
+		const char ** extensionNames = new const char *[extensionCount];
+		if (SDL_Vulkan_GetInstanceExtensions(window, &extensionCount, extensionNames) < 0)
+		{
+			throw std::runtime_error("failed to retrieve vulkan instance extension names!");
+		}
+
+		for (unsigned int i = 0; i < extensionCount; i++)
+			extensions.push_back(extensionNames[i]);
 
 
 		if (enableValidationLayers)
 			extensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+
+		delete extensionNames;
 
 		return extensions;
 	}
@@ -315,7 +323,7 @@ const std::vector<Vertex> vertices = {
 	void VulkanRenderer::createSurface()
 	{
 		
-		if (SDL_Vulkan_CreateSurface(window, instance, surface.replace()) != VK_SUCCESS)
+		if (SDL_Vulkan_CreateSurface(window, instance, surface.replace()) < 0)
 			throw std::runtime_error("failed to create window surface!");
 	}
 
@@ -419,7 +427,7 @@ const std::vector<Vertex> vertices = {
 
 		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
 
-		uint32_t formatCount;
+		uint32_t formatCount = 0;
 		vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr);
 
 		if (formatCount != 0)
@@ -428,7 +436,7 @@ const std::vector<Vertex> vertices = {
 			vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details.formats.data());
 		}
 
-		uint32_t presentModeCount;
+		uint32_t presentModeCount = 0;
 		vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, nullptr);
 
 		if (presentModeCount != 0)

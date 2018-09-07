@@ -26,7 +26,7 @@ bool Application::Update()
 		shouldContinue = shouldContinue && system->Update();
 	}
 
-	if (shouldContinue)
+	if (!shouldContinue)
 		isRunning = false;
 
 	return isRunning;
