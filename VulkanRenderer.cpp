@@ -7,8 +7,10 @@
 #include <vector>
 #include <cstring>
 #include <array>
+#include "SDL_vulkan.h"
 
 #include "VulkanRenderer.h"
+
 
 VulkanRenderer::VulkanRenderer()
 {
@@ -20,14 +22,23 @@ void VulkanRenderer::Initialize()
 	initVulkan();
 }
 
-void VulkanRenderer::Update()
+bool VulkanRenderer::Update()
 {
-	mainLoop();
+	if (glfwWindowShouldClose(window))
+		return false;
+	
+	
+	glfwPollEvents();
+	drawFrame();
+	
+	return true;
 }
 
 void VulkanRenderer::Uninitialize()
 {
+	vkDeviceWaitIdle(device);
 
+	SDL_DestroyWindow(window);
 }
 
 VkResult CreateDebugReportCallbackEXT(VkInstance instance,
@@ -132,13 +143,15 @@ const std::vector<Vertex> vertices = {
 
 	void VulkanRenderer::initWindow()
 	{
-		glfwInit();
-		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+		int sdlStat = SDL_Init(SDL_INIT_EVERYTHING);
+		if (sdlStat < 0)
+		{
+			// TODO: implement logger
+			// Log.Error("SDL failed to initialize with ", sdlStat);
+			return;
+		}
 
-		window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
-
-		glfwSetWindowUserPointer(window, this);
-		glfwSetWindowSizeCallback(window, VulkanRenderer::onWindowResized);
+		window = SDL_CreateWindow("Slab Engine", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, 0);
 	}
 
 	void VulkanRenderer::onWindowResized(GLFWwindow* window, int width, int height)
@@ -301,7 +314,8 @@ const std::vector<Vertex> vertices = {
 
 	void VulkanRenderer::createSurface()
 	{
-		if (glfwCreateWindowSurface(instance, window, nullptr, surface.replace()) != VK_SUCCESS)
+		
+		if (SDL_Vulkan_CreateSurface(window, instance, surface.replace()) != VK_SUCCESS)
 			throw std::runtime_error("failed to create window surface!");
 	}
 
@@ -563,7 +577,7 @@ const std::vector<Vertex> vertices = {
 		else
 		{
 			int width, height;
-			glfwGetWindowSize(window, &width, &height);
+			SDL_GetWindowSize(window, &width, &height);
 
 			VkExtent2D actualExtent = { width, height };
 			actualExtent.width = std::max(capabilities.minImageExtent.width,
@@ -1004,19 +1018,6 @@ const std::vector<Vertex> vertices = {
 		if (vkCreateSemaphore(device, &semaphoreInfo, nullptr, imageAvailableSemaphore.replace()) != VK_SUCCESS
 			|| vkCreateSemaphore(device, &semaphoreInfo, nullptr, renderFinishedSemaphore.replace()) != VK_SUCCESS)
 			throw std::runtime_error("failed to create semaphores!");
-	}
-
-	void VulkanRenderer::mainLoop()
-	{
-		while (!glfwWindowShouldClose(window))
-		{
-			glfwPollEvents();
-			drawFrame();
-		}
-
-		vkDeviceWaitIdle(device);
-
-		glfwDestroyWindow(window);
 	}
 
 	void VulkanRenderer::drawFrame()

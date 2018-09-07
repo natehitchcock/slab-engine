@@ -14,7 +14,7 @@ public:
 	// TODO: implement filesystem path management class
 	Application(std::string applicationConfigPath);
 	void Initialize();
-	void Update();
+	bool Update();
 	void Uninitialize();
 
 	bool GetIsRunning();

@@ -1,11 +1,7 @@
 #pragma once
 #include "ISystem.h"
 #include "VDeleter.h"
-
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-
-#include <glm/glm.hpp>
+#include "SDL.h"
 
 class VulkanRenderer: public ISystem
 {
@@ -29,7 +25,7 @@ class VulkanRenderer: public ISystem
 	};
 
 private:
-	GLFWwindow * window;
+	SDL_Window * window;
 	VDeleter<VkInstance> instance{ vkDestroyInstance };
 	VDeleter<VkDebugReportCallbackEXT> callback{ instance, DestroyDebugReportCallbackEXT };
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
@@ -56,7 +52,7 @@ private:
 public:
 	VulkanRenderer();
 	void Initialize();
-	void Update();
+	bool Update();
 	void Uninitialize();
 
 private:
@@ -98,7 +94,6 @@ private:
 	void createCommandBuffers();
 	void createSemaphores();
 
-	void mainLoop();
 	void drawFrame();
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(

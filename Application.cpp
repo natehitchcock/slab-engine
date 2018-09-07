@@ -18,12 +18,18 @@ void Application::Initialize()
 	}
 }
 
-void Application::Update()
+bool Application::Update()
 {
+	bool shouldContinue = true;
 	for (ISystem* system : systems)
 	{
-		system->Update();
+		shouldContinue = shouldContinue && system->Update();
 	}
+
+	if (shouldContinue)
+		isRunning = false;
+
+	return isRunning;
 }
 
 void Application::Uninitialize()
