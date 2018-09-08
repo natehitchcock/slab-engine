@@ -8,10 +8,12 @@
 #include <cstring>
 #include <array>
 
+#include "Application.h"
 #include "VulkanRenderer.h"
 
 VulkanRenderer::VulkanRenderer()
 {
+	REGISTER_SYSTEM(IRenderer, this);
 }
 
 void VulkanRenderer::Initialize()

@@ -7,7 +7,7 @@ int main(void)
 	std::string configPath = "./";
 
 	Application app(configPath);
-
+	
 	app.Initialize();
 
 	while (app.GetIsRunning())

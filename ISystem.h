@@ -15,3 +15,11 @@ public:
 	virtual void Uninitialize() = 0;
 private:
 };
+
+template<typename T>
+struct SystemType
+{
+	static const char* GetName() { return "NONE";  };
+};
+
+#define ENABLE_SYSTEM_TYPE(A) template<> struct SystemType<A> { static const char* GetName() { return #A; } };

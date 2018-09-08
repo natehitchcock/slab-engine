@@ -1,10 +1,10 @@
 #pragma once
-#include "ISystem.h"
+#include "IRenderer.h"
 #include "VDeleter.h"
 #include "SDL.h"
 #include "SDL_Vulkan.h"
 
-class VulkanRenderer: public ISystem
+class VulkanRenderer: public IRenderer
 {
 	struct QueueFamilyIndices
 	{
