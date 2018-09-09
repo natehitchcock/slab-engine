@@ -3,7 +3,8 @@
 class ISystem
 {
 public:
-	
+	// TODO: Do I need a virtual dtor here for the inheritance heirarchy to be correctly destructed?
+
 	// Used for connecting to other systems and
 	//	for when grabbing something in the constructor isn't safe
 	virtual void Initialize() = 0;

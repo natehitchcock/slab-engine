@@ -5,7 +5,7 @@ class SDLAdapter :
 {
 private:
 	// Other system references
-	Events* events = nullptr;
+	class Events* events = nullptr;
 public:
 	SDLAdapter();
 	~SDLAdapter();

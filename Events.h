@@ -5,7 +5,7 @@
 
 #include "ISystem.h"
 
-typedef void EventHandler(void*);
+typedef std::function<void (void*)> EventHandler;
 typedef std::list<EventHandler> CategoryHandlers;
 
 class Events : public ISystem

@@ -21,6 +21,8 @@ private:
 public:
 	// TODO: implement filesystem path management class
 	Application(std::string applicationConfigPath);
+	~Application();
+
 	void Initialize();
 	bool Update();
 	void Uninitialize();
