@@ -43,6 +43,11 @@ void Application::Initialize()
 	{
 		system->Initialize();
 	}
+
+	events = GET_SYSTEM(Events);
+	events->On("Quit", [=](void* data) {
+		isRunning = false;
+	});
 }
 
 bool Application::Update()

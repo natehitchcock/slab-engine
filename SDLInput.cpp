@@ -8,6 +8,7 @@
 
 SDLInput::SDLInput()
 {
+	inputEventMapping[SDLK_ESCAPE] = "Quit";
 }
 
 SDLInput::~SDLInput()
@@ -52,4 +53,8 @@ void SDLInput::HandleKeyUp(SDL_Event* sdlEvent)
 void SDLInput::HandleKeyDown(SDL_Event* sdlEvent)
 {
 	std::cout << "Got a key down!" << std::endl;
+	if (inputEventMapping.find(sdlEvent->key.keysym.sym) != inputEventMapping.end())
+	{
+		events->Send(inputEventMapping[sdlEvent->key.keysym.sym], nullptr);
+	}
 }

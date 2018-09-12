@@ -18,6 +18,7 @@ private:
 
 	static Application* instance;
 
+	class Events* events;
 public:
 	// TODO: implement filesystem path management class
 	Application(std::string applicationConfigPath);

@@ -1,5 +1,7 @@
 #pragma once
 #include "ISystem.h"
+#include <unordered_map>
+#include <string>
 
 union SDL_Event;
 
@@ -8,6 +10,8 @@ class SDLInput :
 {
 private:
 	class Events* events;
+
+	std::unordered_map<int, std::string> inputEventMapping;
 public:
 	SDLInput();
 	~SDLInput();

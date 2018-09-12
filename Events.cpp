@@ -33,16 +33,30 @@ void Events::On(std::string eventName, EventHandler handler)
 	eventHandlers[eventName].push_back(handler);
 }
 
+CategoryHandlers::iterator find(CategoryHandlers::iterator _First, CategoryHandlers::iterator _Last, EventHandler& _Val)
+{	// find first matching _Val
+	_DEBUG_RANGE(_First, _Last);
+	
+	while (_First != _Last)
+	{
+		if (_First->target<EventHandler>() == _Val.target<EventHandler>())
+			break;
+
+		_First++;
+	}
+
+	return _First;
+}
+
 void Events::Off(std::string eventName, EventHandler handler)
 {
-	/*
-	CategoryHandlers::const_iterator foundHandler = std::find(eventHandlers[eventName].cbegin, eventHandlers[eventName].cend, handler);
+	CategoryHandlers::const_iterator foundHandler = find(eventHandlers[eventName].begin(), eventHandlers[eventName].end(), handler);
 
-	if (foundHandler != eventHandlers[eventName].cend)
+	if (foundHandler != eventHandlers[eventName].cend())
 	{
 		eventHandlers[eventName].erase(foundHandler);
 	}
-	*/
+	
 }
 
 void Events::Send(std::string eventName, void* data)
